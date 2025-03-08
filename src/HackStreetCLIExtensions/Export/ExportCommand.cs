@@ -46,19 +46,19 @@ namespace SitecoreCHCLIExtensions.Export
 
         public override Task<int> InvokeAsync(InvocationContext context)
         {
-            Renderer.WriteLine(this.Parameters.Query);
-            Renderer.WriteLine(this.Parameters.Fields);
-            Renderer.WriteLine(this.Parameters.Location);
+            Renderer.WriteLine(Parameters.Query);
+            Renderer.WriteLine(Parameters.Fields);
+            Renderer.WriteLine(Parameters.Location);
             // Return exit code to indicate success or failure
-            var client = this.Client.Value;
-            var query = this.Parameters.Query;
-            var location = this.Parameters.Location;
-            var fields = this.Parameters.Fields;
+            var client = Client.Value;
+            var query = Parameters.Query;
+            var location = Parameters.Location;
+            var fields = Parameters.Fields;
             var assetDefinition = client.EntityDefinitions.GetAsync("M.Asset").ConfigureAwait(false).GetAwaiter().GetResult();
             if (assetDefinition != null)
             {
                 Renderer.WriteLine("Asset Id 1");
-                var queryFilters = this.Parameters.Query.Split(",");
+                var queryFilters = Parameters.Query.Split(",");
                 var entityPropertyDefinitions = assetDefinition.GetPropertyDefinitions();
                 var entityRelationDefinitions = assetDefinition.GetRelationDefinitions();
                 if (queryFilters.Length > 0)
