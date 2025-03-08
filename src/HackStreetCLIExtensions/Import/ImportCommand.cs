@@ -28,7 +28,14 @@ namespace HackStreetCLIExtensions.Import
 
         public override Task<int> InvokeAsync(InvocationContext context)
         {
-            return Task.FromResult(0);
+            Renderer.WriteLine(Parameters.Location);
+            var client = Client.Value;
+            var location = Parameters.Location;
+            var assetDefinition = client.EntityDefinitions.GetAsync("M.Asset").ConfigureAwait(false).GetAwaiter().GetResult();
+            if (assetDefinition != null)
+            {
+            }
+                return Task.FromResult(0);
         }
     }
 }
