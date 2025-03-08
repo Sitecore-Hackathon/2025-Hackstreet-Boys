@@ -57,15 +57,18 @@ namespace HackStreetCLIExtensions.CommandHandlers
                     List<QueryFilter> filters = new List<QueryFilter>();
                     var standardRepostiory = client.Entities.GetAsync("M.Content.Repository.Standard").ConfigureAwait(false).GetAwaiter().GetResult();
                     var approvedStatus = client.Entities.GetAsync("M.Final.LifeCycle.Status.Approved").ConfigureAwait(false).GetAwaiter().GetResult();
+                    // Asset type is M.Asset
                     filters.Add(new DefinitionQueryFilter()
                     {
                         Name = "M.Asset"
                     });
+                    //Making sure that its a Content Hub Asset and not an archived asset
                     filters.Add(new RelationQueryFilter
                     {
                         Relation = "ContentRepositoryToAsset",
                         ParentId = standardRepostiory.Id
                     });
+                    //Only taking Assets which are in Final Lifecycle - Approved
                     filters.Add(new RelationQueryFilter
                     {
                         Relation = "FinalLifeCycleStatusToAsset",
