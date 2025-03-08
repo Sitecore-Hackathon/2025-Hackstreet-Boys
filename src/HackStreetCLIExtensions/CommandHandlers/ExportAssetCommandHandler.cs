@@ -31,9 +31,9 @@ namespace HackStreetCLIExtensions.CommandHandlers
         /// <returns>An Excel File if the command is executed successfully.</returns>
         public override Task<int> InvokeAsync(InvocationContext context)
         {
-            //try
-            //{
-            Renderer.RenderView(new InfoView("Starting Asset Export from Sitecore Content Hub to Excel"));
+            try
+            {
+                Renderer.RenderView(new InfoView("Starting Asset Export from Sitecore Content Hub to Excel"));
             //Noting down the Input Fields for End User visibility
             Renderer.RenderView(new MessageView($"Input Query: {Parameters.Query}"));
             Renderer.RenderView(new MessageView($"Input Fields: {Parameters.Fields}"));
@@ -226,12 +226,12 @@ namespace HackStreetCLIExtensions.CommandHandlers
                 }
             }
             return Task.FromResult(0);
-            //}
-            //catch (Exception)
-            //{
-            //    Renderer.RenderView(new ErrorView("Some error occuring while exporting assets"));
-            //    return Task.FromResult(0);
-            //}
+            }
+            catch (Exception)
+            {
+                Renderer.RenderView(new ErrorView("Some error occuring while exporting assets"));
+                return Task.FromResult(0);
+            }
         }
     }
 }
