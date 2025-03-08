@@ -3,13 +3,14 @@ using HackStreetCLIExtensions.Messages;
 using HackStreetCLIExtensions.Models;
 using Sitecore.CH.Cli.Core.Abstractions.Commands;
 using Stylelabs.M.Sdk.Contracts.Notifications;
+using System.CommandLine;
 
 namespace HackStreetCLIExtensions.Commands
 {
     public class CreateEmailTemplateCommand : BaseCommand<CreateEmailTemplateCommandHandler>
     {
         public CreateEmailTemplateCommand() : base("createemailtemplate", "Create Email Template")
-            {
+        {
             AddOption<string>(CreateEmailTemplateMessages.Name, false, new string[2]
             {
                 "--name",
@@ -30,11 +31,21 @@ namespace HackStreetCLIExtensions.Commands
                 "--body",
                 "-b"
             });
-            AddOption<ICollection<EmailTemplateVariablesModel>>(CreateEmailTemplateMessages.Variables, false, new string[2]
+            AddOption<string>(CreateEmailTemplateMessages.EmailDescription, false, new string[2]
             {
-                "--variables",
-                "-v"
+                "--description",
+                "-d"
             });
-            }
+            AddOption<ICollection<string>>(CreateEmailTemplateMessages.VariablesName, false, new string[2]
+            {
+                "--variablename",
+                "-vn"
+            });
+            AddEnumArrayOption<TemplateVariableType>(CreateEmailTemplateMessages.VariablesType, false, new string[2]
+            {
+                "--variabletype",
+                "-vt"
+            });
+        }
     }
 }

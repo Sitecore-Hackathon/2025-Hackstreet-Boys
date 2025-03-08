@@ -19,7 +19,7 @@ namespace HackStreetCLIExtensions.Plugins
         public void RegisterCommands(ICommandRegistry registry)
         {
             registry.RegisterCommandGroup(
-     "hackstreet", new List<Command> { new ExportAssetCommand() }, "Hackstreet plugin for cli extension");
+     "hackstreet", new List<Command> { new ExportAssetCommand(), new CreateEmailTemplateCommand() }, "Hackstreet plugin for cli extension");
         }
     }
 }
