@@ -23,60 +23,61 @@ namespace HackStreetCLIExtensions.CommandHandlers
 
         public override Task<int> InvokeAsync(InvocationContext context)
         {
-            Renderer.RenderView(new InfoView("Create email template (START)"));
-            //Renderer.WriteLine(Parameters.Name);
-            //Renderer.WriteLine(Parameters.Name);
-            //Renderer.WriteLine(Parameters.Label);
-            //Renderer.WriteLine(Parameters.Subject);
-            //Renderer.WriteLine(Parameters.Body);
-            //Renderer.RenderJson(Parameters.VariableName);
-            //Renderer.RenderJson(Parameters.VariableType);
+            try
+            {
+                Renderer.RenderView(new InfoView("Mail Template Generation (START)"));
+                Renderer.RenderView(new MessageView($"Email Name: {Parameters.Name}"));
+                Renderer.RenderView(new MessageView($"Email Label: {Parameters.Label}"));
+                Renderer.RenderView(new MessageView($"Email Subject: {Parameters.Subject}"));
+                Renderer.RenderView(new MessageView($"Email Body: {Parameters.Body}"));
+                Renderer.RenderView(new MessageView($"Email Description: {Parameters.Description}"));            
+                var emailTemplateName = Parameters.Name;
+                var emailTemplateLabel = Parameters.Label;
+                var emailTemplateSubject = Parameters.Subject;
+                var emailTemplateBody = Parameters.Body;
+                var emailTemplateDescription = Parameters.Description;
+                var emailTemplateVariableNames = Parameters.VariableName;
+                var emailTemplateVariableTypes = Parameters.VariableType.ToList();               
+                var client = Client.Value;
+                CultureInfo enUs = CultureInfo.GetCultureInfo("en-US");
+                var entity = client.EntityFactory.CreateAsync(Constants.MailTemplate.DefinitionName).ConfigureAwait(false).GetAwaiter().GetResult();
+                var template = client.TypedEntityFactory.FromEntity<IMailTemplateEntity>(entity);
+                template.Name = emailTemplateName;
+                template.Subject[enUs] = emailTemplateSubject;
+                template.Description[enUs] = emailTemplateDescription;
+                template.Body[enUs] = emailTemplateBody;
+                template.SetPropertyValue("M.Mailing.TemplateLabel", enUs, emailTemplateLabel);
 
-            var emailTemplateName = Parameters.Name;
-            var emailTemplateLabel = Parameters.Label;
-            var emailTemplateSubject = Parameters.Subject;
-            var emailTemplateBody = Parameters.Body;
-            var emailTemplateDescription = Parameters.Description;
-
-            var emailTemplateVariableNames = Parameters.VariableName;
-            var emailTemplateVariableTypes = Parameters.VariableType.ToList();
-
-            var client = Client.Value;
-            CultureInfo enUs = CultureInfo.GetCultureInfo("en-US");
-            var entity = client.EntityFactory.CreateAsync(Constants.MailTemplate.DefinitionName).ConfigureAwait(false).GetAwaiter().GetResult();
-            var template = client.TypedEntityFactory.FromEntity<IMailTemplateEntity>(entity);
-            template.Name = emailTemplateName;
-            template.Subject[enUs] = emailTemplateSubject;
-            template.Description[enUs] = emailTemplateDescription;
-            template.Body[enUs] = emailTemplateBody;
-            template.SetPropertyValue("M.Mailing.TemplateLabel", enUs, emailTemplateLabel);
-
-            if (emailTemplateVariableNames != null) {
-                var index = 0;
-                List<TemplateVariable> templateVariables = new List<TemplateVariable>();
-                foreach (var emailTemplateVariableName in emailTemplateVariableNames)
+                if (emailTemplateVariableNames != null)
                 {
-                    var templateVariable = new TemplateVariable
+                    var index = 0;
+                    List<TemplateVariable> templateVariables = new List<TemplateVariable>();
+                    foreach (var emailTemplateVariableName in emailTemplateVariableNames)
                     {
-                        Name = emailTemplateVariableName,
-                        VariableType = emailTemplateVariableTypes[index]
-                    };
-                    templateVariables.Add(templateVariable);
-                    index++;
+                        var templateVariable = new TemplateVariable
+                        {
+                            Name = emailTemplateVariableName,
+                            VariableType = emailTemplateVariableTypes[index]
+                        };
+                        templateVariables.Add(templateVariable);
+                        index++;
+                    }
+                    template.SetTemplateVariables(templateVariables);
                 }
-                template.SetTemplateVariables(templateVariables);
+                var entityId = client.Entities.SaveAsync(template).ConfigureAwait(false).GetAwaiter().GetResult();
+                var emailEntityLink = client.LinkHelper.EntityToLinkAsync(entityId).ConfigureAwait(false).GetAwaiter().GetResult();
+                var hostName = new Uri(emailEntityLink.Uri).Host;
+                var emailLinkUrl = $"https://{hostName}/en-us/admin/emailtemplates/detail/{entityId}";
+                //Renderer.WriteLine("Email Template Created Successfully");
+                Renderer.RenderView(new SuccessView($"Email Template Url: {emailLinkUrl}"));
+                Renderer.RenderView(new SuccessView("Mail Template Generated Successfully!!!"));
+                return Task.FromResult(0);
             }
-
-            var entityId = client.Entities.SaveAsync(template).ConfigureAwait(false).GetAwaiter().GetResult();
-            var emailEntityLink = client.LinkHelper.EntityToLinkAsync(entityId).ConfigureAwait(false).GetAwaiter().GetResult();
-            var hostName = new Uri(emailEntityLink.Uri).Host;
-            var emailLinkUrl = $"https://{hostName}/en-us/admin/emailtemplates/detail/{entityId}";
-            Renderer.RenderView(new SuccessView("Email Template Created Successfully."));
-            //Renderer.WriteLine("Email Template Created Successfully");
-            Renderer.RenderView(new SuccessView($"Email link: {emailLinkUrl}"));
-            //Renderer.WriteLine(emailLinkUrl);
-            Renderer.RenderView(new InfoView("Create email template (END)"));
-            return Task.FromResult(0);
+            catch (Exception ex)
+            {
+                Renderer.RenderView(new ErrorView("Some error occuring while creating email template"));
+                return Task.FromResult(0);
+            }
         }
     }
 }

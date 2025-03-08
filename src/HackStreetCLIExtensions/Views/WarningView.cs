@@ -13,6 +13,7 @@ namespace HackStreetCLIExtensions.Views
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"{DateTime.Now} :: {message}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }
