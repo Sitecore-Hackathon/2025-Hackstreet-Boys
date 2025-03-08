@@ -1,5 +1,6 @@
 ﻿using HackStreetCLIExtensions.Extensions;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using Sitecore.CH.Cli.Core.Abstractions.Commands;
 using Sitecore.CH.Cli.Core.Abstractions.Rendering;
 using SitecoreCHCLIExtensions.Models;
@@ -108,7 +109,7 @@ namespace SitecoreCHCLIExtensions.Export
                     IEntityIterator iterator = client.Querying.CreateEntityIterator(assetQuery, EntityLoadConfiguration.Full);
                     List<dynamic> assetEntities = new List<dynamic>();
                     var fieldsArray = fields.Split(',');
-                    List<string> excelKeys = new List<string>();
+                    HashSet<string> excelKeys = new HashSet<string>();
                     excelKeys.Add("Identifier");
                     excelKeys.Add("File");
                     while (iterator.MoveNextAsync().ConfigureAwait(false).GetAwaiter().GetResult())
@@ -120,7 +121,7 @@ namespace SitecoreCHCLIExtensions.Export
                         {
                             Renderer.WriteLine("Asset Id :");
                             Renderer.WriteLine(entity.Id.ToString());
-                            dynamic assetEntityObj = new ExpandoObject();
+                            dynamic assetEntityObj = new JObject();
                             foreach (var fieldProp in fieldsArray)
                             {
                                 var isPropertyField = entityPropertyDefinitions.Where(x => x.Name == fieldProp)?.FirstOrDefault();
@@ -130,19 +131,27 @@ namespace SitecoreCHCLIExtensions.Export
                                 {
                                     if (isPropertyField.IsMultiLanguage)
                                     {
+                                        Renderer.WriteLine("is Multi");
                                         excelKeys.Add($"{fieldProp}#en-US");
+                                        Renderer.WriteLine(fieldProp);
                                         string propertyValue = entity.GetPropertyValue<string>(fieldProp, CultureInfo.GetCultureInfo("en-US"));
+                                        Renderer.WriteLine(propertyValue);
                                         assetEntityObj[fieldProp]["#en-US"] = propertyValue;
+                                        Renderer.WriteLine("is MultiCompleted");
                                     }
                                     else
                                     {
+                                        Renderer.WriteLine("Non multi");
                                         excelKeys.Add($"{fieldProp}");
                                         string propertyValue = entity.GetPropertyValue<string>(fieldProp);
+                                        Renderer.WriteLine(propertyValue);
                                         assetEntityObj[fieldProp] = propertyValue;
+                                        Renderer.WriteLine("Non multi MultiCompleted");
                                     }
                                 }
                                 else if (isRelationalField != null)
                                 {
+                                    Renderer.WriteLine("Relational Id 1");
                                     excelKeys.Add($"{fieldProp}");
                                     IRelation entityRelation = entity.GetRelation(fieldProp);
                                     List<string> relationalValues = new List<string>();
@@ -159,6 +168,7 @@ namespace SitecoreCHCLIExtensions.Export
                                                     relationalValues.Add(relationalEntity.Identifier);
                                                 }
                                             }
+                                            Renderer.WriteLine(string.Join("|", relationalValues));
                                             assetEntityObj[fieldProp] = string.Join("|", relationalValues);
                                         }
                                     }
@@ -171,8 +181,12 @@ namespace SitecoreCHCLIExtensions.Export
                             Renderer.WriteLine(publicLink);
                             assetEntityObj.Identifier = entityIdentifier;
                             assetEntityObj.File = publicLink;
+                            Renderer.WriteLine("JSON");
+                            Renderer.RenderJson(assetEntityObj);
                             assetEntities.Add(assetEntityObj);
                         }
+                        Renderer.RenderJson(assetEntities);
+                        Renderer.RenderJson(excelKeys);
                     }
                     ContentHubHelperExtension.ExportToExcel(assetEntities, excelKeys, location);
                 }
