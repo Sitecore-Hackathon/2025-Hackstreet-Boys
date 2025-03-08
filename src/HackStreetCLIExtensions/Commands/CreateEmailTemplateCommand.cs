@@ -36,8 +36,5 @@ namespace HackStreetCLIExtensions.Commands
                 "-v"
             });
             }
-
-        
-    
     }
 }
