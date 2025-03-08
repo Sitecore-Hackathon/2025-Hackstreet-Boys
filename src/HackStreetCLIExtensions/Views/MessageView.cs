@@ -1,9 +1,4 @@
 ﻿using Sitecore.CH.Cli.Core.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HackStreetCLIExtensions.Views
 {
@@ -13,6 +8,7 @@ namespace HackStreetCLIExtensions.Views
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"{DateTime.Now} :: {message}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }
