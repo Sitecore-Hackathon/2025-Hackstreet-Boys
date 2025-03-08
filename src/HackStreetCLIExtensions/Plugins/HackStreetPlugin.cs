@@ -14,7 +14,6 @@ namespace SitecoreCHCLIExtensions.Plugins
         {
             services.AddCommandHandler<ExportCommandHandler, ExportParameters>();
         }
-
         public void RegisterCommands(ICommandRegistry registry)
         {
             registry.RegisterCommandGroup(
