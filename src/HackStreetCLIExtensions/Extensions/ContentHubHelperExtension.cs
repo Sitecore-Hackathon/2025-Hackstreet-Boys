@@ -30,7 +30,7 @@ namespace HackStreetCLIExtensions.Extensions
                 if (publicLinkentity != null)
                 {
                     var publicEntityLink = client.LinkHelper.EntityToLinkAsync(publicLinkentity.Id.Value).ConfigureAwait(false).GetAwaiter().GetResult();
-                    renderer.WriteLine("Public Link exist:");
+                    //renderer.WriteLine("Public Link exist:");
                     var relativeUrl = publicLinkentity.GetPropertyValue<string>("RelativeUrl");
                     var versionHash = publicLinkentity.GetPropertyValue<string>("VersionHash");
                     var hostName = new Uri(publicEntityLink.Uri).Host;
