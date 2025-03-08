@@ -13,6 +13,7 @@ using Stylelabs.M.Sdk.WebClient;
 using System.CommandLine.Invocation;
 using System.Globalization;
 using Stylelabs.M.Base.Querying;
+using HackStreetCLIExtensions.Views;
 
 namespace HackStreetCLIExtensions.CommandHandlers
 {
@@ -26,23 +27,31 @@ namespace HackStreetCLIExtensions.CommandHandlers
 
         public override Task<int> InvokeAsync(InvocationContext context)
         {
-            Renderer.WriteLine(Parameters.Query);
-            Renderer.WriteLine(Parameters.Fields);
-            Renderer.WriteLine(Parameters.Location);
+            Renderer.RenderView(new InfoView("Export assets (START)"));
+            Renderer.RenderView(new MessageView($"Input Query: {Parameters.Query}"));
+            Renderer.RenderView(new MessageView($"Input Fields: {Parameters.Fields}"));
+            Renderer.RenderView(new MessageView($"Input Location: {Parameters.Location}"));
+            //Renderer.WriteLine(Parameters.Query);
+            //Renderer.WriteLine(Parameters.Fields);
+            //Renderer.WriteLine(Parameters.Location);
             // Return exit code to indicate success or failure
-            var client = Client.Value;
+            IWebMClient client = Client.Value;
             var query = Parameters.Query;
             var location = Parameters.Location;
             var fields = Parameters.Fields;
-            var assetDefinition = client.EntityDefinitions.GetAsync("M.Asset").ConfigureAwait(false).GetAwaiter().GetResult();
+            Renderer.RenderView(new InfoView("Getting M.Asset definition"));
+            IEntityDefinition assetDefinition = client.EntityDefinitions.GetAsync("M.Asset").ConfigureAwait(false).GetAwaiter().GetResult();
             if (assetDefinition != null)
             {
-                Renderer.WriteLine("Asset Id 1");
+                Renderer.RenderView(new MessageView("Found M.Asset definition"));
+                //Renderer.RenderView(new MessageView("Asset Id 1"));
+                //Renderer.WriteLine("Asset Id 1");
                 var queryFilters = Parameters.Query.Split("&");
-                var entityPropertyDefinitions = assetDefinition.GetPropertyDefinitions();
-                var entityRelationDefinitions = assetDefinition.GetRelationDefinitions();
+                IList<IPropertyDefinition> entityPropertyDefinitions = assetDefinition.GetPropertyDefinitions();
+                IList<IRelationDefinition> entityRelationDefinitions = assetDefinition.GetRelationDefinitions();
                 if (queryFilters.Length > 0)
                 {
+                    Renderer.RenderView(new InfoView("Iterating query filters"));
                     List<QueryFilter> filters = new List<QueryFilter>();
                     filters.Add(new DefinitionQueryFilter()
                     {
@@ -53,13 +62,16 @@ namespace HackStreetCLIExtensions.CommandHandlers
                         var filterPair = filter.Split("=");
                         var filterPairKey = filterPair[0];
                         var filterPairValue = filterPair[1];
-                        Renderer.WriteLine(filterPairKey);
-                        Renderer.WriteLine(filterPairValue);
-                        var filterPropertyDefinition = entityPropertyDefinitions.Where(x => x.Name == filterPairKey);
-                        var filterRelationDefinition = entityRelationDefinitions.Where(x => x.Name == filterPairKey);
+                        Renderer.RenderView(new WarningView(filterPairKey));
+                        Renderer.RenderView(new WarningView(filterPairValue));
+                        //Renderer.WriteLine(filterPairKey);
+                        //Renderer.WriteLine(filterPairValue);
+                        IEnumerable<IPropertyDefinition> filterPropertyDefinition = entityPropertyDefinitions.Where(x => x.Name == filterPairKey);
+                        IEnumerable<IRelationDefinition> filterRelationDefinition = entityRelationDefinitions.Where(x => x.Name == filterPairKey);
                         if (filterPropertyDefinition.Any())
                         {
-                            Renderer.WriteLine("Property Relation");
+                            Renderer.RenderView(new MessageView("Property Relation"));
+                            //Renderer.WriteLine("Property Relation");
                             filters.Add(new PropertyQueryFilter
                             {
                                 Property = filterPairKey,
@@ -69,7 +81,8 @@ namespace HackStreetCLIExtensions.CommandHandlers
                         }
                         else if (filterRelationDefinition.Any())
                         {
-                            Renderer.WriteLine("Query Relation");
+                            Renderer.RenderView(new MessageView("Query Relation"));
+                            //Renderer.WriteLine("Query Relation");
                             filters.Add(new RelationQueryFilter
                             {
                                 Relation = filterPairKey,
@@ -95,16 +108,19 @@ namespace HackStreetCLIExtensions.CommandHandlers
                     while (iterator.MoveNextAsync().ConfigureAwait(false).GetAwaiter().GetResult())
                     {
                         var entities = iterator.Current.Items;
-                        Renderer.WriteLine("Asset Count :");
-                        Renderer.WriteLine(entities.Count.ToString());
+                        Renderer.RenderView(new SuccessView($"Asset count: {entities.Count}"));
+                        //Renderer.WriteLine("Asset Count :");
+                        //Renderer.WriteLine(entities.Count.ToString());
                         foreach (var entity in entities)
                         {
-                            Renderer.WriteLine("Asset Id :");
-                            Renderer.WriteLine(entity.Id.ToString());
+                            Renderer.RenderView(new MessageView($"Asset Id: {entity.Id}"));
+                            //Renderer.WriteLine("Asset Id :");
+                            //Renderer.WriteLine(entity.Id.ToString());
                             var publicLink = ContentHubHelperExtension.FetchAssetPublicLink(client, entity, Renderer);
                             if (!string.IsNullOrEmpty(publicLink)){
-                                Renderer.WriteLine("Public Link :");
-                                Renderer.WriteLine(publicLink);
+                                Renderer.RenderView(new MessageView($"Public link: {publicLink}"));
+                                //Renderer.WriteLine("Public Link :");
+                                //Renderer.WriteLine(publicLink);
                                 var entityIdentifier = entity.Identifier;
                                 JObject assetEntityObj = new JObject();
                                 assetEntityObj["Identifier"] = entityIdentifier;
@@ -119,20 +135,24 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                     {
                                         if (isPropertyField.IsMultiLanguage)
                                         {
-                                            Renderer.WriteLine("is Multi");
+                                            Renderer.RenderView(new WarningView($"Is Multi"));
+                                            //Renderer.WriteLine("is Multi");
                                             var excelfieldName = $"{fieldProp}#en-US";
                                             if (!excelKeys.Contains(excelfieldName))
                                             {
                                                 excelKeys.Add(excelfieldName);
                                             }
 
-                                            Renderer.WriteLine(fieldProp);
+                                            Renderer.RenderView(new MessageView($"Field prop: {fieldProp}"));
+                                            //Renderer.WriteLine(fieldProp);
                                             string propertyValue = entity.GetPropertyValue<string>(fieldProp, CultureInfo.GetCultureInfo("en-US"));
                                             if (!string.IsNullOrEmpty(propertyValue))
                                             {
-                                                Renderer.WriteLine(propertyValue);
+                                                Renderer.RenderView(new MessageView($"{propertyValue}"));
+                                                //Renderer.WriteLine(propertyValue);
                                                 assetEntityObj[excelfieldName] = propertyValue;
-                                                Renderer.WriteLine("is MultiCompleted");
+                                                Renderer.RenderView(new WarningView($"Is MultiCompleted"));
+                                                //Renderer.WriteLine("is MultiCompleted");
                                             }
                                             else
                                             {
@@ -141,7 +161,8 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                         }
                                         else
                                         {
-                                            Renderer.WriteLine("Non multi");
+                                            Renderer.RenderView(new WarningView($"Non Multi"));
+                                            //Renderer.WriteLine("Non multi");
                                             var excelfieldName = $"{fieldProp}";
                                             if (!excelKeys.Contains(excelfieldName))
                                             {
@@ -150,9 +171,11 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                             string propertyValue = entity.GetPropertyValue<string>(fieldProp);
                                             if (!string.IsNullOrEmpty(propertyValue))
                                             {
-                                                Renderer.WriteLine(propertyValue);
+                                                Renderer.RenderView(new MessageView(propertyValue));
+                                                //Renderer.WriteLine(propertyValue);
                                                 assetEntityObj[excelfieldName] = propertyValue;
-                                                Renderer.WriteLine("Non multi MultiCompleted");
+                                                Renderer.RenderView(new WarningView($"Non multi MultiCompleted"));
+                                                //Renderer.WriteLine("Non multi MultiCompleted");
                                             }
                                             else
                                             {
@@ -162,7 +185,8 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                     }
                                     else if (isRelationalField != null)
                                     {
-                                        Renderer.WriteLine("Relational Id 1");
+                                        Renderer.RenderView(new MessageView("Relational Id 1"));
+                                        //Renderer.WriteLine("Relational Id 1");
                                         var excelfieldName = $"{fieldProp}";
                                         if (!excelKeys.Contains(excelfieldName))
                                         {
@@ -183,28 +207,33 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                                         relationalValues.Add(relationalEntity.Identifier);
                                                     }
                                                 }
-                                                Renderer.WriteLine(string.Join("|", relationalValues));
-                                                assetEntityObj[fieldProp] = string.Join("|", relationalValues);
+                                                var relationalFieldValue = string.Join("|", relationalValues);
+                                                Renderer.RenderView(new InfoView(relationalFieldValue));
+                                                //Renderer.WriteLine(string.Join("|", relationalValues));
+                                                assetEntityObj[fieldProp] = relationalFieldValue;
                                             }
                                         }
                                     }
                                 }
-                                Renderer.WriteLine("JSON");
+                                Renderer.RenderView(new SuccessView("Entity JSON"));
+                                //Renderer.WriteLine("JSON");
                                 Renderer.RenderJson(assetEntityObj);
                                 assetEntities.Add(assetEntityObj);
                             }
                             else
                             {
-                                Renderer.WriteLine("Public Link does not exist");
+                                Renderer.RenderView(new WarningView("Public Link does not exist"));
+                                //Renderer.WriteLine("Public Link does not exist");
                             }
                         }
-                        Renderer.RenderJson(assetEntities);
+                        //Renderer.RenderJson(assetEntities);
                         Renderer.RenderJson(excelKeys);
-                        Renderer.WriteLine(JsonConvert.SerializeObject(assetEntities));
+                        Renderer.RenderView(new InfoView(JsonConvert.SerializeObject(assetEntities)));
                     }
                     ContentHubHelperExtension.ExportToExcel(assetEntities, excelKeys, location);
                 }
             }
+            //Renderer.RenderView(new InfoView("Export assets (END)"));
             return Task.FromResult(0);
         }
     }
