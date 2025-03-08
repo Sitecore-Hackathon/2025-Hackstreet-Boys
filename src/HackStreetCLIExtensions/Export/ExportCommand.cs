@@ -10,7 +10,6 @@ using Stylelabs.M.Sdk.Contracts.Querying;
 using Stylelabs.M.Sdk.WebClient;
 using System.CommandLine.Invocation;
 using System.Dynamic;
-using static Stylelabs.M.Sdk.Constants;
 
 namespace SitecoreCHCLIExtensions.Export
 {
@@ -125,9 +124,7 @@ namespace SitecoreCHCLIExtensions.Export
                             assetEntities.Add(assetEntityObj);
                         }
                     }
-
                     ContentHubHelperExtension.ExportToExcel(assetEntities, location);
-                    // Do something with the entities
                 }
             }
             return Task.FromResult(0);
