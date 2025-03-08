@@ -9,12 +9,12 @@ namespace HackStreetCLIExtensions.Commands
     {
         public CreateEmailTemplateCommand() : base("createemailtemplate", "Create Email Template")
         {
-            AddOption<string>(CreateEmailTemplateMessages.Name, false, new string[2]
+            AddOption<string>(CreateEmailTemplateMessages.Name, true, new string[2]
             {
                 "--name",
                 "-n"
             });
-            AddOption<string>(CreateEmailTemplateMessages.Label, false, new string[2]
+            AddOption<string>(CreateEmailTemplateMessages.Label, true, new string[2]
             {
                 "--label",
                 "-l"
