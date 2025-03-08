@@ -62,7 +62,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
                         {
                             Name = "M.Asset"
                         });
-                        //Making sure that its a Content Hub Asset and not an archived asset
+                        //Making sure that its a Content Hub DAM Asset 
                         filters.Add(new RelationQueryFilter
                         {
                             Relation = "ContentRepositoryToAsset",
