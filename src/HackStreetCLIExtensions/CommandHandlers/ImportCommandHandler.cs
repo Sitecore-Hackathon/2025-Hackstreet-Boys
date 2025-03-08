@@ -1,23 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
 using Sitecore.CH.Cli.Core.Abstractions.Commands;
 using Sitecore.CH.Cli.Core.Abstractions.Rendering;
-using SitecoreCHCLIExtensions.Models;
+using HackStreetCLIExtensions.Models;
 using Stylelabs.M.Sdk.WebClient;
 using System.CommandLine.Invocation;
 
-namespace HackStreetCLIExtensions.Import
+namespace HackStreetCLIExtensions.CommandHandlers
 {
-    public class ImportCommand : BaseCommand<ImportCommandHandler>
-    {
-        public ImportCommand() : base("import", "Import Assets")
-        {
-            AddOption<string>(ImportMessages.ImportCommandLocation, false, new string[2]
-            {
-                "--location",
-                "-l"
-            });
-        }
-    }
     public class ImportCommandHandler : BaseCommandHandler
     {
         public ImportCommandHandler(Lazy<IWebMClient> client, IOutputRenderer renderer, IOptions<ImportParameters> parameters) : base(client, renderer)
@@ -35,7 +24,7 @@ namespace HackStreetCLIExtensions.Import
             if (assetDefinition != null)
             {
             }
-                return Task.FromResult(0);
+            return Task.FromResult(0);
         }
     }
 }

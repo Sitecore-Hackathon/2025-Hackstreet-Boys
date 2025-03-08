@@ -1,4 +1,4 @@
-﻿namespace SitecoreCHCLIExtensions.Models
+﻿namespace HackStreetCLIExtensions.Models
 {
     /// <summary>
     /// Parameters required for Export

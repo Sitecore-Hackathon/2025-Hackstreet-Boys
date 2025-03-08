@@ -1,4 +1,4 @@
-﻿namespace SitecoreCHCLIExtensions.Export
+﻿namespace HackStreetCLIExtensions.Messages
 {
     internal class ExportMessages
     {
