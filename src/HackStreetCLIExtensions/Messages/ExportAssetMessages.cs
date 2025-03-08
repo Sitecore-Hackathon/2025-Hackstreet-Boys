@@ -1,6 +1,6 @@
 ﻿namespace HackStreetCLIExtensions.Messages
 {
-    internal class ExportMessages
+    internal class ExportAssetMessages
     {
         public const string ExportCommandQuery = "Query to filter assets";
         public const string ExportCommandLocation = "Location to export file";

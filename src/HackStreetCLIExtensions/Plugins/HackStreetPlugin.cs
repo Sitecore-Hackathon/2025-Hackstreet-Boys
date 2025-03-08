@@ -13,13 +13,12 @@ namespace HackStreetCLIExtensions.Plugins
         //This is required to register the command handler
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCommandHandler<ExportCommandHandler, ExportParameters>();
-            services.AddCommandHandler<ImportCommandHandler, ImportParameters>();
+            services.AddCommandHandler<ExportAssetCommandHandler, ExportAssetParameters>();
         }
         public void RegisterCommands(ICommandRegistry registry)
         {
             registry.RegisterCommandGroup(
-     "hackstreet", new List<Command> { new ExportCommand() }, "Hackstreet plugin for cli extension");
+     "hackstreet", new List<Command> { new ExportAssetCommand() }, "Hackstreet plugin for cli extension");
         }
     }
 }
