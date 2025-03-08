@@ -34,12 +34,13 @@ namespace HackStreetCLIExtensions.Extensions
                   where e.Id.In(publicLinks.Children)
                    && e.Property("Resource") == "downloadOriginal"
                   select e);
-                IEntity publicLinkentity = client.Querying.SingleAsync(q, EntityLoadConfiguration.Default).Result;
-                if (publicLinkentity != null)
+                var publicLinkentities = client.Querying.QueryAsync(q, EntityLoadConfiguration.Default).Result;
+                if (publicLinkentities != null && publicLinkentities.Items.Count>0)
                 {
-                    var publicEntityLink = client.LinkHelper.EntityToLinkAsync(publicLinkentity.Id!.Value).ConfigureAwait(false).GetAwaiter().GetResult();
-                    var relativeUrl = publicLinkentity.GetPropertyValue<string>("RelativeUrl");
-                    var versionHash = publicLinkentity.GetPropertyValue<string>("VersionHash");
+                    var publicLinkEntity = publicLinkentities.Items.FirstOrDefault();
+                    var publicEntityLink = client.LinkHelper.EntityToLinkAsync(publicLinkEntity!.Id!.Value).ConfigureAwait(false).GetAwaiter().GetResult();
+                    var relativeUrl = publicLinkEntity.GetPropertyValue<string>("RelativeUrl");
+                    var versionHash = publicLinkEntity.GetPropertyValue<string>("VersionHash");
                     var hostName = new Uri(publicEntityLink.Uri).Host;
                     return $"https://{hostName}/api/public/content/{relativeUrl}?v={versionHash}";
                 }
