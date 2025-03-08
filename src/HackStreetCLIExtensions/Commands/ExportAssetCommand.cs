@@ -1,5 +1,4 @@
 ﻿using HackStreetCLIExtensions.CommandHandlers;
-using HackStreetCLIExtensions.Extensions;
 using HackStreetCLIExtensions.Messages;
 using Sitecore.CH.Cli.Core.Abstractions.Commands;
 
