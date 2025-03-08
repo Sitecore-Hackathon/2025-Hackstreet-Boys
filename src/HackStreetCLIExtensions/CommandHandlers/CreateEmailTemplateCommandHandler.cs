@@ -21,6 +21,11 @@ namespace HackStreetCLIExtensions.CommandHandlers
         }
         public CreateEmailTemplateCommandParameters Parameters { get; set; }
 
+        /// <summary>
+        /// This command creates an Email Template in Sitecore Content Hub based on given Name, Label, Subject, Body, Description and Variables.
+        /// </summary>
+        /// <param name="context">The command invocation context.</param>
+        /// <returns>Sitecore Content Hub specific URL of the Email Template.</returns>
         public override Task<int> InvokeAsync(InvocationContext context)
         {
             try
@@ -67,13 +72,12 @@ namespace HackStreetCLIExtensions.CommandHandlers
                 var entityId = client.Entities.SaveAsync(template).ConfigureAwait(false).GetAwaiter().GetResult();
                 var emailEntityLink = client.LinkHelper.EntityToLinkAsync(entityId).ConfigureAwait(false).GetAwaiter().GetResult();
                 var hostName = new Uri(emailEntityLink.Uri).Host;
-                var emailLinkUrl = $"https://{hostName}/en-us/admin/emailtemplates/detail/{entityId}";
-                //Renderer.WriteLine("Email Template Created Successfully");
+                var emailLinkUrl = $"https://{hostName}/en-us/admin/emailtemplates/detail/{entityId}";                
                 Renderer.RenderView(new SuccessView($"Email Template Url: {emailLinkUrl}"));
                 Renderer.RenderView(new SuccessView("Mail Template Generated Successfully!!!"));
                 return Task.FromResult(0);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Renderer.RenderView(new ErrorView("Some error occuring while creating email template"));
                 return Task.FromResult(0);

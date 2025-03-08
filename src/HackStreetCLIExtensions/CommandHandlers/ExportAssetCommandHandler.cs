@@ -24,12 +24,15 @@ namespace HackStreetCLIExtensions.CommandHandlers
             Parameters = parameters?.Value;
         }
         public ExportAssetParameters Parameters { get; set; }
-
+        /// <summary>
+        /// This command exports assets based on given query, fields and location in Excel File.
+        /// </summary>
+        /// <param name="context">The command invocation context.</param>
+        /// <returns>An Excel File if the command is executed successfully.</returns>
         public override Task<int> InvokeAsync(InvocationContext context)
         {
             try
             {
-
                 Renderer.RenderView(new InfoView("Starting Asset Export"));
                 Renderer.RenderView(new MessageView($"Input Query: {Parameters.Query}"));
                 Renderer.RenderView(new MessageView($"Input Fields: {Parameters.Fields}"));
