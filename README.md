@@ -35,7 +35,7 @@ We have created a Custom Plugin, and developed Two Commands as a part of the Sit
 For simplicity, we have provided the Steps here:
 1. Download the latest version of Content Hub CLI from the GitHub - https://github.com/Sitecore/content-hub-cli/releases/tag/1.1.75 For Windows, users Download the Zip directly using the link: https://github.com/Sitecore/content-hub-cli/releases/download/1.1.75/ch-cli-win-x64.1.1.75.zip
 2. Create a Directory C:\SitecoreHackathon25
-3. Extract the Archive such that the extraction dialog looks like -
+3. Extract the Archive such that the extraction dialog looks like - docs/images/1.png?raw=true
 4. Navigate to the directory at C:\SitecoreHackathon25\ch-cli-win-x64.1.1.75 and open in Commandline as an Administrator.
 3. Run the following command in CLI -- `ch-cli`
 
@@ -49,12 +49,17 @@ Please follow these instructions for setting up OAuth Client inside Content Hub 
 
 1. Open the following directory C:\SitecoreHackathon25\ch-cli-win-x64.1.1.751 in Windows Explorer.
 2. Copy the Folder "Sitecore.CH.Cli.Plugin.HackStreet" from the current repo at the location /src/cliplugin to the folder "C:\SitecoreHackathon25\ch-cli-win-x64.1.1.751\plugins"
+3. The Directory Structure of the plugins should look like this after installation (docs/images/after-installation.png?raw=true "After Installation")
 
 ### Configuration
 1. Open Commandline with the following location as an Administrator: C:\SitecoreHackathon25\ch-cli-win-x64.1.1.751. 
 2. Login to a Content Hub instance using the following CLI Command - 
-ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE-URL] --client-id [CLIENT-ID] --client-secret [CLIENT-SECRET] --redirect-uri [REDIRECT-URL]
-3. 
+ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE-URL] --client-id [CLIENT-ID] --client-secret [CLIENT-SECRET] --redirect-uri [REDIRECT-URL] 
+3. We have obfuscated text for security reasons, although, this is how our command looks like in the Commandline - (docs/images/CLI-Login-Command.png?raw=true "Hackathon Logo")
+4. Press Enter - and it will open up a login screen for access in your browser (docs/images/browser-login.png?raw=true "Browser Login") 
+5. Provide the credentials and say grant access (docs/images/authorize.png?raw=true "Authorize")
+6. It would say it is successful now. (docs/images/success.png?raw=true "Browser Login")  
+
 ## Comments
 
 - Reference Links:
