@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sitecore.CH.Cli.Core.Abstractions.Infrastructure;
 using Sitecore.CH.Cli.Core.Extensions;
-using SitecoreCHCLIExtensions.Export;
-using SitecoreCHCLIExtensions.Models;
+using HackStreetCLIExtensions.Commands;
+using HackStreetCLIExtensions.Models;
 using System.CommandLine;
+using HackStreetCLIExtensions.CommandHandlers;
 
-namespace SitecoreCHCLIExtensions.Plugins
+namespace HackStreetCLIExtensions.Plugins
 {
     public class HackStreetPlugin : IPlugin
     {
@@ -13,6 +14,7 @@ namespace SitecoreCHCLIExtensions.Plugins
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCommandHandler<ExportCommandHandler, ExportParameters>();
+            services.AddCommandHandler<ImportCommandHandler, ImportParameters>();
         }
         public void RegisterCommands(ICommandRegistry registry)
         {
