@@ -82,11 +82,11 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 `ch-cli hackstreet exportasset --query AssetMediaToAsset=M.AssetMedia.jpg --location C:\assetstoexport\Asset.xlsx --fields "Title|Description|AssetTypeToAsset|AssetMediaToAsset ` It looks like 
 ![Command in CommandLine](docs/images/Command-in-CommandLine.png?raw=true "Command in CommandLine")
 3. Press Enter and it would execute the command
-![Execution One](docs/images/Execution-1.png?raw=true "Execution One")
+![Execution One](docs/images/Export-Execution-1.png?raw=true "Execution One")
 
-![Execution Two](docs/images/Execution-2.png?raw=true "Execution Two")
+![Execution Two](docs/images/Export-Execution-2.png?raw=true "Execution Two")
 
-![Execution Three](docs/images/Execution-3.png?raw=true "Execution Three")
+![Execution Three](docs/images/Export-Execution-3.png?raw=true "Execution Three")
 4. Notice above, that the messages which are Info, are in blue, Success steps are in Green and the ones which are failed because of required fields not in Content Hub are in RED. Also, the items selected via the query are 26 while the items which are exported are 23. 
 5. This Excel file can now be Imported in a different Content Hub instance after logging into the other instance using the Content Hub content CLI Command `ch-cli content import -s C:\assetstoexport\Asset.xlsx`
 
