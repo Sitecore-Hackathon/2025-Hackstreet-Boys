@@ -5,21 +5,21 @@ using Sitecore.CH.Cli.Core.Abstractions.Commands;
 
 namespace HackStreetCLIExtensions.Commands
 {
-    public class ExportCommand : BaseCommand<ExportCommandHandler>
+    public class ExportAssetCommand : BaseCommand<ExportAssetCommandHandler>
     {
-        public ExportCommand() : base("export", "Export Assets")
+        public ExportAssetCommand() : base("exportasset", "Export Assets")
         {
-            AddOption<string>(ExportMessages.ExportCommandQuery, false, new string[2]
+            AddOption<string>(ExportAssetMessages.ExportCommandQuery, false, new string[2]
             {
                 "--query",
                 "-q"
             });
-            AddOption<string>(ExportMessages.ExportCommandLocation, false, new string[2]
+            AddOption<string>(ExportAssetMessages.ExportCommandLocation, false, new string[2]
             {
                 "--location",
                 "-l"
             });
-            AddOption<string>(ExportMessages.ExportCommandFields, false, new string[2]
+            AddOption<string>(ExportAssetMessages.ExportCommandFields, false, new string[2]
             {
                 "--fields",
                 "-f"

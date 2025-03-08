@@ -3,7 +3,7 @@
     /// <summary>
     /// Parameters required for Export
     /// </summary>
-    public class ExportParameters
+    public class ExportAssetParameters
     {
         /// <summary>
         /// Assets of Content Hub will be found/filtered based on this Query

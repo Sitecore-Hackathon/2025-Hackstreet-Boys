@@ -16,13 +16,13 @@ using Stylelabs.M.Base.Querying;
 
 namespace HackStreetCLIExtensions.CommandHandlers
 {
-    public class ExportCommandHandler : BaseCommandHandler
+    public class ExportAssetCommandHandler : BaseCommandHandler
     {
-        public ExportCommandHandler(Lazy<IWebMClient> client, IOutputRenderer renderer, IOptions<ExportParameters> parameters) : base(client, renderer)
+        public ExportAssetCommandHandler(Lazy<IWebMClient> client, IOutputRenderer renderer, IOptions<ExportAssetParameters> parameters) : base(client, renderer)
         {
             this.Parameters = parameters?.Value;
         }
-        public ExportParameters Parameters { get; set; }
+        public ExportAssetParameters Parameters { get; set; }
 
         public override Task<int> InvokeAsync(InvocationContext context)
         {
