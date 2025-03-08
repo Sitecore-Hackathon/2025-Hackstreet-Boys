@@ -1,9 +1,7 @@
 ﻿using HackStreetCLIExtensions.CommandHandlers;
 using HackStreetCLIExtensions.Messages;
-using HackStreetCLIExtensions.Models;
 using Sitecore.CH.Cli.Core.Abstractions.Commands;
 using Stylelabs.M.Sdk.Contracts.Notifications;
-using System.CommandLine;
 
 namespace HackStreetCLIExtensions.Commands
 {

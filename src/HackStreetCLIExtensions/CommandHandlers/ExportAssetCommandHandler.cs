@@ -13,7 +13,6 @@ using Stylelabs.M.Sdk.WebClient;
 using System.CommandLine.Invocation;
 using System.Globalization;
 using Stylelabs.M.Base.Querying;
-using System.CommandLine.Hosting;
 
 namespace HackStreetCLIExtensions.CommandHandlers
 {
