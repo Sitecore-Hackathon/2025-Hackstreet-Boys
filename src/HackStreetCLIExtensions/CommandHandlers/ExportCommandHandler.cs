@@ -91,6 +91,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
                     HashSet<string> excelKeys = new HashSet<string>();
                     excelKeys.Add("Identifier");
                     excelKeys.Add("File");
+                    excelKeys.Add("FinalLifeCycleStatusToAsset");
                     while (iterator.MoveNextAsync().ConfigureAwait(false).GetAwaiter().GetResult())
                     {
                         var entities = iterator.Current.Items;
@@ -108,6 +109,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                 JObject assetEntityObj = new JObject();
                                 assetEntityObj["Identifier"] = entityIdentifier;
                                 assetEntityObj["File"] = publicLink;
+                                assetEntityObj["FinalLifeCycleStatusToAsset"] = "M.Final.LifeCycle.Status.Approved";
                                 foreach (var fieldProp in fieldsArray)
                                 {
                                     var isPropertyField = entityPropertyDefinitions.Where(x => x.Name == fieldProp)?.FirstOrDefault();

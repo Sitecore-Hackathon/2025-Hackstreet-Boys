@@ -14,7 +14,6 @@ namespace HackStreetCLIExtensions.Plugins
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCommandHandler<ExportCommandHandler, ExportParameters>();
-            services.AddCommandHandler<ImportCommandHandler, ImportParameters>();
         }
         public void RegisterCommands(ICommandRegistry registry)
         {
