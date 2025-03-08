@@ -34,18 +34,21 @@ namespace HackStreetCLIExtensions.CommandHandlers
             try
             {
                 Renderer.RenderView(new InfoView("Starting Asset Export from Sitecore Content Hub to Excel"));
+                //Noting down the Input Fields for End User visibility
                 Renderer.RenderView(new MessageView($"Input Query: {Parameters.Query}"));
                 Renderer.RenderView(new MessageView($"Input Fields: {Parameters.Fields}"));
-                Renderer.RenderView(new MessageView($"Input Location: {Parameters.Location}"));                
+                Renderer.RenderView(new MessageView($"Input Location: {Parameters.Location}"));
                 IWebMClient client = Client.Value;
+                //Taking the values of Parameters to variables as a part of coding best practices
                 var query = Parameters.Query;
                 var location = Parameters.Location;
                 var fields = Parameters.Fields;
                 Renderer.RenderView(new InfoView("Getting the definition for M.Asset"));
+                //Fetching M.Asset Entity Definition
                 IEntityDefinition assetDefinition = client.EntityDefinitions.GetAsync("M.Asset").ConfigureAwait(false).GetAwaiter().GetResult();
                 if (assetDefinition != null)
                 {
-                    Renderer.RenderView(new MessageView("The M.Asset definition is found"));                    
+                    Renderer.RenderView(new MessageView("The M.Asset definition is found"));
                     var queryFilters = Parameters.Query.Split("&");
                     IList<IPropertyDefinition> entityPropertyDefinitions = assetDefinition.GetPropertyDefinitions();
                     IList<IRelationDefinition> entityRelationDefinitions = assetDefinition.GetRelationDefinitions();
@@ -60,11 +63,11 @@ namespace HackStreetCLIExtensions.CommandHandlers
                         {
                             var filterPair = filter.Split("=");
                             var filterPairKey = filterPair[0];
-                            var filterPairValue = filterPair[1];                     
+                            var filterPairValue = filterPair[1];
                             IEnumerable<IPropertyDefinition> filterPropertyDefinition = entityPropertyDefinitions.Where(x => x.Name == filterPairKey);
                             IEnumerable<IRelationDefinition> filterRelationDefinition = entityRelationDefinitions.Where(x => x.Name == filterPairKey);
                             if (filterPropertyDefinition.Any())
-                            {                                
+                            {
                                 filters.Add(new PropertyQueryFilter
                                 {
                                     Property = filterPairKey,
@@ -73,8 +76,8 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                 });
                             }
                             else if (filterRelationDefinition.Any())
-                            {                             
-                                var entityId = client.Entities.GetAsync(filterPairValue).ConfigureAwait(false).GetAwaiter().GetResult();   
+                            {
+                                var entityId = client.Entities.GetAsync(filterPairValue).ConfigureAwait(false).GetAwaiter().GetResult();
                                 filters.Add(new RelationQueryFilter
                                 {
                                     Relation = filterPairKey,
@@ -92,42 +95,47 @@ namespace HackStreetCLIExtensions.CommandHandlers
                         };
                         IEntityIterator iterator = client.Querying.CreateEntityIterator(assetQuery, EntityLoadConfiguration.Full);
                         List<JObject> assetEntities = new List<JObject>();
+                        //Splitting the Fields using Pipe Separator
                         var fieldsArray = fields.Split('|');
                         HashSet<string> excelKeys = new HashSet<string>();
+                        //Mandatory Fields added in Excel, even if user doesn't give any fields, these fields are added by default.
                         excelKeys.Add("Identifier");
                         excelKeys.Add("File");
                         excelKeys.Add("FinalLifeCycleStatusToAsset");
-                        
+
                         while (iterator.MoveNextAsync().ConfigureAwait(false).GetAwaiter().GetResult())
                         {
                             Renderer.RenderView(new SuccessView($"Total assets satisfying the query in Sitecore Content Hub: {iterator.Current.TotalNumberOfResults}"));
-                            var entities = iterator.Current.Items;                            
+                            var entities = iterator.Current.Items;
                             foreach (var entity in entities)
-                            {                              
+                            {
+                                //Getting the File Public Link
                                 var publicLink = ContentHubHelperExtension.FetchAssetPublicLink(client, entity, Renderer);
                                 if (!string.IsNullOrEmpty(publicLink))
                                 {
-                                    Renderer.RenderView(new SuccessView($"Asset Id: {entity.Id}"));                             
+                                    Renderer.RenderView(new SuccessView($"Asset Id: {entity.Id}"));
                                     var entityIdentifier = entity.Identifier;
                                     JObject assetEntityObj = new JObject();
+                                    //Assigning the Entity Identifier
                                     assetEntityObj["Identifier"] = entityIdentifier;
+                                    //Assigning the Public Link
                                     assetEntityObj["File"] = publicLink;
+                                    //Setting the FinalLifeCycleStatusToAsset
                                     assetEntityObj["FinalLifeCycleStatusToAsset"] = "M.Final.LifeCycle.Status.Approved";
                                     foreach (var fieldProp in fieldsArray)
                                     {
                                         var isPropertyField = entityPropertyDefinitions.Where(x => x.Name == fieldProp)?.FirstOrDefault();
                                         var isRelationalField = entityRelationDefinitions.Where(x => x.Name == fieldProp)?.FirstOrDefault();
-
                                         if (isPropertyField != null)
                                         {
+                                            //Checking if the Property is Culture Sensitive or not
                                             if (isPropertyField.IsMultiLanguage)
-                                            {                                                
+                                            {
                                                 var excelfieldName = $"{fieldProp}#en-US";
                                                 if (!excelKeys.Contains(excelfieldName))
                                                 {
                                                     excelKeys.Add(excelfieldName);
                                                 }
-
                                                 string propertyValue = entity.GetPropertyValue<string>(fieldProp, CultureInfo.GetCultureInfo("en-US"));
                                                 if (!string.IsNullOrEmpty(propertyValue))
                                                 {
@@ -170,6 +178,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                                 var relationalIds = entityRelation.GetIds();
                                                 if (relationalIds != null && relationalIds.Any())
                                                 {
+                                                    //Iterating all Relational IDs from Entity Relation
                                                     foreach (var relationalId in relationalIds)
                                                     {
                                                         var relationalEntity = client.Entities.GetAsync(relationalId).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -178,6 +187,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                                             relationalValues.Add(relationalEntity.Identifier);
                                                         }
                                                     }
+                                                    //Concatenating all values using Pipe Separator
                                                     var relationalFieldValue = string.Join("|", relationalValues);
                                                     assetEntityObj[fieldProp] = relationalFieldValue;
                                                 }
@@ -189,14 +199,17 @@ namespace HackStreetCLIExtensions.CommandHandlers
                                 }
                                 else
                                 {
+                                    //If Public Link isn't available, the Asset cannot be exported.
+                                    //Hence, noting it down and responding as ERROR in the CLI Messages
                                     Renderer.RenderView(new ErrorView($"Asset Id: {entity.Id}"));
                                     Renderer.RenderView(new ErrorView("Public Link for the entity does not exist. It will be skipped from the export."));
                                 }
-                            }                            
+                            }
                         }
+                        //Exporting to Excel.
                         ContentHubHelperExtension.ExportToExcel(assetEntities, excelKeys, Renderer, location);
                     }
-                }                
+                }
                 return Task.FromResult(0);
             }
             catch (Exception)
