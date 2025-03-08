@@ -1,4 +1,5 @@
 ﻿using HackStreetCLIExtensions.Models;
+using HackStreetCLIExtensions.Views;
 using Microsoft.Extensions.Options;
 using Sitecore.CH.Cli.Core.Abstractions.Commands;
 using Sitecore.CH.Cli.Core.Abstractions.Rendering;
@@ -22,13 +23,14 @@ namespace HackStreetCLIExtensions.CommandHandlers
 
         public override Task<int> InvokeAsync(InvocationContext context)
         {
-            Renderer.WriteLine(Parameters.Name);
-            Renderer.WriteLine(Parameters.Name);
-            Renderer.WriteLine(Parameters.Label);
-            Renderer.WriteLine(Parameters.Subject);
-            Renderer.WriteLine(Parameters.Body);
-            Renderer.RenderJson(Parameters.VariableName);
-            Renderer.RenderJson(Parameters.VariableType);
+            Renderer.RenderView(new InfoView("Create email template (START)"));
+            //Renderer.WriteLine(Parameters.Name);
+            //Renderer.WriteLine(Parameters.Name);
+            //Renderer.WriteLine(Parameters.Label);
+            //Renderer.WriteLine(Parameters.Subject);
+            //Renderer.WriteLine(Parameters.Body);
+            //Renderer.RenderJson(Parameters.VariableName);
+            //Renderer.RenderJson(Parameters.VariableType);
 
             var emailTemplateName = Parameters.Name;
             var emailTemplateLabel = Parameters.Label;
@@ -69,8 +71,11 @@ namespace HackStreetCLIExtensions.CommandHandlers
             var emailEntityLink = client.LinkHelper.EntityToLinkAsync(entityId).ConfigureAwait(false).GetAwaiter().GetResult();
             var hostName = new Uri(emailEntityLink.Uri).Host;
             var emailLinkUrl = $"https://{hostName}/en-us/admin/emailtemplates/detail/{entityId}";
-            Renderer.WriteLine("Email Template Created Successfully");
-            Renderer.WriteLine(emailLinkUrl);
+            Renderer.RenderView(new SuccessView("Email Template Created Successfully."));
+            //Renderer.WriteLine("Email Template Created Successfully");
+            Renderer.RenderView(new SuccessView($"Email link: {emailLinkUrl}"));
+            //Renderer.WriteLine(emailLinkUrl);
+            Renderer.RenderView(new InfoView("Create email template (END)"));
             return Task.FromResult(0);
         }
     }
