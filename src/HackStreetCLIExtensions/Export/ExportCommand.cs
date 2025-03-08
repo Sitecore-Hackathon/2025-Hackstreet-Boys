@@ -6,10 +6,12 @@ using SitecoreCHCLIExtensions.Models;
 using Stylelabs.M.Base.Querying;
 using Stylelabs.M.Base.Querying.Filters;
 using Stylelabs.M.Framework.Essentials.LoadConfigurations;
+using Stylelabs.M.Sdk.Contracts.Base;
 using Stylelabs.M.Sdk.Contracts.Querying;
 using Stylelabs.M.Sdk.WebClient;
 using System.CommandLine.Invocation;
 using System.Dynamic;
+using System.Globalization;
 
 namespace SitecoreCHCLIExtensions.Export
 {
@@ -51,11 +53,14 @@ namespace SitecoreCHCLIExtensions.Export
             var client = this.Client.Value;
             var query = this.Parameters.Query;
             var location = this.Parameters.Location;
+            var fields = this.Parameters.Fields;
             var assetDefinition = client.EntityDefinitions.GetAsync("M.Asset").ConfigureAwait(false).GetAwaiter().GetResult();
             if (assetDefinition != null)
             {
                 Renderer.WriteLine("Asset Id 1");
                 var queryFilters = this.Parameters.Query.Split(",");
+                var entityPropertyDefinitions = assetDefinition.GetPropertyDefinitions();
+                var entityRelationDefinitions = assetDefinition.GetRelationDefinitions();
                 if (queryFilters.Length > 0)
                 {
                     List<QueryFilter> filters = new List<QueryFilter>();
@@ -70,9 +75,9 @@ namespace SitecoreCHCLIExtensions.Export
                         var filterPairValue = filterPair[1];
                         Renderer.WriteLine(filterPairKey);
                         Renderer.WriteLine(filterPairValue);
-                        var filterPropertyDefintion = assetDefinition.GetPropertyDefinitions().Where(x => x.Name == filterPairKey);
-                        var filterRelationDefintion = assetDefinition.GetRelationDefinitions().Where(x => x.Name == filterPairKey);
-                        if (filterPropertyDefintion.Any())
+                        var filterPropertyDefinition = entityPropertyDefinitions.Where(x => x.Name == filterPairKey);
+                        var filterRelationDefinition = entityRelationDefinitions.Where(x => x.Name == filterPairKey);
+                        if (filterPropertyDefinition.Any())
                         {
                             Renderer.WriteLine("Property Relation");
                             filters.Add(new PropertyQueryFilter
@@ -82,7 +87,7 @@ namespace SitecoreCHCLIExtensions.Export
                                 DataType = FilterDataType.String
                             });
                         }
-                        else if (filterRelationDefintion.Any())
+                        else if (filterRelationDefinition.Any())
                         {
                             Renderer.WriteLine("Query Relation");
                             filters.Add(new RelationQueryFilter
@@ -102,6 +107,10 @@ namespace SitecoreCHCLIExtensions.Export
                     };
                     IEntityIterator iterator = client.Querying.CreateEntityIterator(assetQuery, EntityLoadConfiguration.Full);
                     List<dynamic> assetEntities = new List<dynamic>();
+                    var fieldsArray = fields.Split(',');
+                    List<string> excelKeys = new List<string>();
+                    excelKeys.Add("Identifier");
+                    excelKeys.Add("File");
                     while (iterator.MoveNextAsync().ConfigureAwait(false).GetAwaiter().GetResult())
                     {
                         var entities = iterator.Current.Items;
@@ -111,20 +120,61 @@ namespace SitecoreCHCLIExtensions.Export
                         {
                             Renderer.WriteLine("Asset Id :");
                             Renderer.WriteLine(entity.Id.ToString());
+                            dynamic assetEntityObj = new ExpandoObject();
+                            foreach (var fieldProp in fieldsArray)
+                            {
+                                var isPropertyField = entityPropertyDefinitions.Where(x => x.Name == fieldProp)?.FirstOrDefault();
+                                var isRelationalField = entityRelationDefinitions.Where(x => x.Name == fieldProp)?.FirstOrDefault();
 
-                            var entityTitle = entity.GetPropertyValue("Title");
+                                if (isPropertyField != null)
+                                {
+                                    if (isPropertyField.IsMultiLanguage)
+                                    {
+                                        excelKeys.Add($"{fieldProp}#en-US");
+                                        string propertyValue = entity.GetPropertyValue<string>(fieldProp, CultureInfo.GetCultureInfo("en-US"));
+                                        assetEntityObj[fieldProp]["#en-US"] = propertyValue;
+                                    }
+                                    else
+                                    {
+                                        excelKeys.Add($"{fieldProp}");
+                                        string propertyValue = entity.GetPropertyValue<string>(fieldProp);
+                                        assetEntityObj[fieldProp] = propertyValue;
+                                    }
+                                }
+                                else if (isRelationalField != null)
+                                {
+                                    excelKeys.Add($"{fieldProp}");
+                                    IRelation entityRelation = entity.GetRelation(fieldProp);
+                                    List<string> relationalValues = new List<string>();
+                                    if (entityRelation != null)
+                                    {
+                                        var relationalIds = entityRelation.GetIds();
+                                        if (relationalIds != null && relationalIds.Any())
+                                        {
+                                            foreach (var relationalId in relationalIds)
+                                            {
+                                                var relationalEntity = client.Entities.GetAsync(relationalId).ConfigureAwait(false).GetAwaiter().GetResult();
+                                                if (relationalEntity != null)
+                                                {
+                                                    relationalValues.Add(relationalEntity.Identifier);
+                                                }
+                                            }
+                                            assetEntityObj[fieldProp] = string.Join("|", relationalValues);
+                                        }
+                                    }
+                                }
+                            }
+
                             var entityIdentifier = entity.Identifier;
                             var publicLink = ContentHubHelperExtension.FetchAssetPublicLink(client, entity, Renderer);
                             Renderer.WriteLine("Public Link :");
                             Renderer.WriteLine(publicLink);
-                            dynamic assetEntityObj = new ExpandoObject();
-                            assetEntityObj.Title = entityTitle;
-                            assetEntityObj.Identifier = entityIdentifier;   
-                            assetEntityObj.PublicLink = publicLink;
+                            assetEntityObj.Identifier = entityIdentifier;
+                            assetEntityObj.File = publicLink;
                             assetEntities.Add(assetEntityObj);
                         }
                     }
-                    ContentHubHelperExtension.ExportToExcel(assetEntities, location);
+                    ContentHubHelperExtension.ExportToExcel(assetEntities, excelKeys, location);
                 }
             }
             return Task.FromResult(0);
