@@ -30,16 +30,20 @@ We have created a Custom Plugin, and developed Two Comamnds as a part of the Sit
 
 ## Pre-requisites and Dependencies
 
-Installation of Sitecore Content Hub CLI is required - https://doc.sitecore.com/ch/en/developers/cloud-dev/install-the-content-hub-cli.html
+> Installation of Sitecore Content Hub CLI is required - https://doc.sitecore.com/ch/en/developers/cloud-dev/install-the-content-hub-cli.html 
+
 For simplicity, we have provided the Steps here:
 1. Download the latest version of Content Hub CLI from the GitHub - https://github.com/Sitecore/content-hub-cli/releases/tag/1.1.75 For Windows, users Download the Zip directly using the link: https://github.com/Sitecore/content-hub-cli/releases/download/1.1.75/ch-cli-win-x64.1.1.75.zip
 2. Extract the Archive and navigate to the extracted location in Commandline.
-3. Run the following command in CLI -- ch-cli
-4. 
+3. Run the following command in CLI -- `ch-cli`
 
+> Setup Environment Variables for Content Hub CLI
+
+1. In the same commandline, which is open at the extracted location, 
 
 ## Installation instructions
 
+1. Login to a Content Hub instance using the following CLI Command
 
 ### Configuration
 
