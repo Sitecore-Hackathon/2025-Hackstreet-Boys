@@ -13,7 +13,7 @@ namespace HackStreetCLIExtensions.Commands
                 "--query",
                 "-q"
             });
-            AddOption<string>(ExportAssetMessages.ExportCommandLocation, false, new string[2]
+            AddOption<string>(ExportAssetMessages.ExportCommandLocation, true, new string[2]
             {
                 "--location",
                 "-l"

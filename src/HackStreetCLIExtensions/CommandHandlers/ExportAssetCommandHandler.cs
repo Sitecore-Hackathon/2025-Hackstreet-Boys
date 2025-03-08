@@ -21,7 +21,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
     {
         public ExportAssetCommandHandler(Lazy<IWebMClient> client, IOutputRenderer renderer, IOptions<ExportAssetParameters> parameters) : base(client, renderer)
         {
-            Parameters = parameters?.Value;
+            Parameters = parameters?.Value!;
         }
         public ExportAssetParameters Parameters { get; set; }
         /// <summary>
@@ -33,7 +33,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
         {
             try
             {
-                Renderer.RenderView(new InfoView("Starting Asset Export"));
+                Renderer.RenderView(new InfoView("Starting Asset Export from Sitecore Content Hub to Excel"));
                 Renderer.RenderView(new MessageView($"Input Query: {Parameters.Query}"));
                 Renderer.RenderView(new MessageView($"Input Fields: {Parameters.Fields}"));
                 Renderer.RenderView(new MessageView($"Input Location: {Parameters.Location}"));                

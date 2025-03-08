@@ -17,7 +17,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
     {
         public CreateEmailTemplateCommandHandler(Lazy<IWebMClient> client, IOutputRenderer renderer, IOptions<CreateEmailTemplateCommandParameters> parameters) : base(client, renderer)
         {
-            Parameters = parameters?.Value;
+            Parameters = parameters?.Value!;
         }
         public CreateEmailTemplateCommandParameters Parameters { get; set; }
 
@@ -30,7 +30,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
         {
             try
             {
-                Renderer.RenderView(new InfoView("Mail Template Generation (START)"));
+                Renderer.RenderView(new InfoView("Starting creation of Email Template in Sitecore Content Hub"));
                 Renderer.RenderView(new MessageView($"Email Name: {Parameters.Name}"));
                 Renderer.RenderView(new MessageView($"Email Label: {Parameters.Label}"));
                 Renderer.RenderView(new MessageView($"Email Subject: {Parameters.Subject}"));

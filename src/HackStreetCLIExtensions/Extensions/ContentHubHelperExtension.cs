@@ -16,6 +16,13 @@ namespace HackStreetCLIExtensions.Extensions
 {
     public static class ContentHubHelperExtension
     {
+        /// <summary>
+        /// Fetch Asset Public Link
+        /// </summary>
+        /// <param name="client">IWebMClient.</param>
+        /// <param name="entity">IEntity.</param>
+        /// <param name="renderer">IOutputRenderer.</param>
+        /// <returns>string.</returns>
         public static string FetchAssetPublicLink(IWebMClient client, IEntity entity, IOutputRenderer renderer)
         {
             string publicLink = string.Empty;
@@ -30,16 +37,22 @@ namespace HackStreetCLIExtensions.Extensions
                 IEntity publicLinkentity = client.Querying.SingleAsync(q, EntityLoadConfiguration.Default).Result;
                 if (publicLinkentity != null)
                 {
-                    var publicEntityLink = client.LinkHelper.EntityToLinkAsync(publicLinkentity.Id.Value).ConfigureAwait(false).GetAwaiter().GetResult();
+                    var publicEntityLink = client.LinkHelper.EntityToLinkAsync(publicLinkentity.Id!.Value).ConfigureAwait(false).GetAwaiter().GetResult();
                     var relativeUrl = publicLinkentity.GetPropertyValue<string>("RelativeUrl");
                     var versionHash = publicLinkentity.GetPropertyValue<string>("VersionHash");
                     var hostName = new Uri(publicEntityLink.Uri).Host;
                     return $"https://{hostName}/api/public/content/{relativeUrl}?v={versionHash}";
                 }
             }
-            //renderer.WriteLine("Public Link does not exist");
             return publicLink;
         }
+        /// <summary>
+        /// Export Entities to Excel.
+        /// </summary>
+        /// <param name="data">IEnumerable<JObject>.</param>
+        /// <param name="keys">IEnumerable<string>.</param>
+        /// <param name="renderer">IOutputRenderer.</param>
+        /// <param name="filePath">string.</param>
         public static void ExportToExcel(IEnumerable<JObject> data, IEnumerable<string> keys, IOutputRenderer renderer, string filePath)
         {
             renderer.RenderView(new InfoView($"Total assets being exported to excel are {data.Count()}."));
@@ -52,7 +65,6 @@ namespace HackStreetCLIExtensions.Extensions
                 var worksheet = package.Workbook.Worksheets.Add("M.Asset");
 
                 worksheet.Cells["A1"].LoadFromDictionaries(jsonItems, true, TableStyles.None, keys);
-                // Save the file
                 var fileInfo = new FileInfo(filePath);
                 package.SaveAs(fileInfo);
                 renderer.RenderView(new SuccessView("Excel Export Completed!!!"));

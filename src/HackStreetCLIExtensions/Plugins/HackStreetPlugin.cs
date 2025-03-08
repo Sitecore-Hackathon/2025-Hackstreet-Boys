@@ -10,7 +10,6 @@ namespace HackStreetCLIExtensions.Plugins
 {
     public class HackStreetPlugin : IPlugin
     {
-        //This is required to register the command handler
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCommandHandler<ExportAssetCommandHandler, ExportAssetParameters>();
