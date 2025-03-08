@@ -20,7 +20,7 @@ namespace HackStreetCLIExtensions.CommandHandlers
     {
         public ExportAssetCommandHandler(Lazy<IWebMClient> client, IOutputRenderer renderer, IOptions<ExportAssetParameters> parameters) : base(client, renderer)
         {
-            this.Parameters = parameters?.Value;
+            Parameters = parameters?.Value;
         }
         public ExportAssetParameters Parameters { get; set; }
 
