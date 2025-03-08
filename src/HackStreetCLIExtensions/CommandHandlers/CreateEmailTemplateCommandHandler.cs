@@ -30,19 +30,14 @@ namespace HackStreetCLIExtensions.CommandHandlers
                 Renderer.RenderView(new MessageView($"Email Label: {Parameters.Label}"));
                 Renderer.RenderView(new MessageView($"Email Subject: {Parameters.Subject}"));
                 Renderer.RenderView(new MessageView($"Email Body: {Parameters.Body}"));
-                Renderer.RenderView(new MessageView($"Email Description: {Parameters.Description}"));
-                
-
+                Renderer.RenderView(new MessageView($"Email Description: {Parameters.Description}"));            
                 var emailTemplateName = Parameters.Name;
                 var emailTemplateLabel = Parameters.Label;
                 var emailTemplateSubject = Parameters.Subject;
                 var emailTemplateBody = Parameters.Body;
                 var emailTemplateDescription = Parameters.Description;
-
                 var emailTemplateVariableNames = Parameters.VariableName;
-                var emailTemplateVariableTypes = Parameters.VariableType.ToList();
-
-               
+                var emailTemplateVariableTypes = Parameters.VariableType.ToList();               
                 var client = Client.Value;
                 CultureInfo enUs = CultureInfo.GetCultureInfo("en-US");
                 var entity = client.EntityFactory.CreateAsync(Constants.MailTemplate.DefinitionName).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -69,7 +64,6 @@ namespace HackStreetCLIExtensions.CommandHandlers
                     }
                     template.SetTemplateVariables(templateVariables);
                 }
-
                 var entityId = client.Entities.SaveAsync(template).ConfigureAwait(false).GetAwaiter().GetResult();
                 var emailEntityLink = client.LinkHelper.EntityToLinkAsync(entityId).ConfigureAwait(false).GetAwaiter().GetResult();
                 var hostName = new Uri(emailEntityLink.Uri).Host;
