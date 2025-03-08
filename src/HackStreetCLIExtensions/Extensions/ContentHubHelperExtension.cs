@@ -49,7 +49,7 @@ namespace HackStreetCLIExtensions.Extensions
             {
                 var worksheet = package.Workbook.Worksheets.Add("M.Asset");
 
-                worksheet.Cells["A1"].LoadFromDictionaries(jsonItems, true, TableStyles.None, new string[] { "Identifier", "File","Title" });
+                worksheet.Cells["A1"].LoadFromDictionaries(jsonItems, true, TableStyles.None, keys);
                 // Save the file
                 var fileInfo = new FileInfo(filePath);
                 package.SaveAs(fileInfo);

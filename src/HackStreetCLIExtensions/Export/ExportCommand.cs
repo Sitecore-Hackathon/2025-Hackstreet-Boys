@@ -148,9 +148,16 @@ namespace SitecoreCHCLIExtensions.Export
                                        
                                         Renderer.WriteLine(fieldProp);
                                         string propertyValue = entity.GetPropertyValue<string>(fieldProp, CultureInfo.GetCultureInfo("en-US"));
-                                        Renderer.WriteLine(propertyValue);
-                                        assetEntityObj[excelfieldName] = propertyValue;
-                                        Renderer.WriteLine("is MultiCompleted");
+                                        if (!string.IsNullOrEmpty(propertyValue))
+                                        {
+                                            Renderer.WriteLine(propertyValue);
+                                            assetEntityObj[excelfieldName] = propertyValue;
+                                            Renderer.WriteLine("is MultiCompleted");
+                                        }
+                                        else
+                                        {
+                                            assetEntityObj[excelfieldName] = string.Empty;
+                                        }
                                     }
                                     else
                                     {
@@ -161,9 +168,16 @@ namespace SitecoreCHCLIExtensions.Export
                                             excelKeys.Add(excelfieldName);
                                         }
                                         string propertyValue = entity.GetPropertyValue<string>(fieldProp);
-                                        Renderer.WriteLine(propertyValue);
-                                        assetEntityObj[fieldProp] = propertyValue;
-                                        Renderer.WriteLine("Non multi MultiCompleted");
+                                        if (!string.IsNullOrEmpty(propertyValue))
+                                        {
+                                            Renderer.WriteLine(propertyValue);
+                                            assetEntityObj[excelfieldName] = propertyValue;
+                                            Renderer.WriteLine("Non multi MultiCompleted");
+                                        }
+                                        else
+                                        {
+                                            assetEntityObj[excelfieldName] = string.Empty;
+                                        }
                                     }
                                 }
                                 else if (isRelationalField != null)
