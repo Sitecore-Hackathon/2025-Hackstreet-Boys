@@ -1,4 +1,6 @@
-﻿using OfficeOpenXml;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using Sitecore.CH.Cli.Core.Abstractions.Rendering;
 using Stylelabs.M.Base.Querying;
@@ -6,6 +8,7 @@ using Stylelabs.M.Base.Querying.Linq;
 using Stylelabs.M.Framework.Essentials.LoadConfigurations;
 using Stylelabs.M.Sdk.Contracts.Base;
 using Stylelabs.M.Sdk.WebClient;
+using System.Dynamic;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace HackStreetCLIExtensions.Extensions
@@ -37,15 +40,16 @@ namespace HackStreetCLIExtensions.Extensions
             renderer.WriteLine("Public Link does not exist");
             return publicLink;
         }
-        public static void ExportToExcel(IEnumerable<dynamic> data, IEnumerable<string> keys, string filePath)
+        public static void ExportToExcel(IEnumerable<JObject> data, IEnumerable<string> keys, string filePath)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var jsonItems = JsonConvert.DeserializeObject<IEnumerable<ExpandoObject>>(JsonConvert.SerializeObject(data));
 
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("M.Asset");
 
-                worksheet.Cells["A1"].LoadFromDictionaries(data, true, TableStyles.None, keys);
+                worksheet.Cells["A1"].LoadFromDictionaries(jsonItems, true, TableStyles.None, new string[] { "Identifier", "File","Title" });
                 // Save the file
                 var fileInfo = new FileInfo(filePath);
                 package.SaveAs(fileInfo);
