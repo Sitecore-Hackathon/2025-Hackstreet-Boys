@@ -14,6 +14,7 @@ namespace HackStreetCLIExtensions.Plugins
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCommandHandler<ExportAssetCommandHandler, ExportAssetParameters>();
+            services.AddCommandHandler<CreateEmailTemplateCommandHandler, CreateEmailTemplateCommandParameters>();
         }
         public void RegisterCommands(ICommandRegistry registry)
         {
