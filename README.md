@@ -77,7 +77,7 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 
 ## Usage instructions
 
-###Export Command Usage Instructions
+### Export Command Usage Instructions
 1. Create a Directory to export an Excel file with details of the Assets. Lets create one called "assetstoexport" in C Drive.
 
 ![Export Directory](docs/images/assets-to-export.png?raw=true "Export Directory")  
@@ -97,7 +97,7 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 5. This Excel file can now be Imported in a different Content Hub instance after logging into the other instance and run the Import command using the Content Hub content CLI Command `ch-cli content import -s C:\assetstoexport\Asset.xlsx` to import the same Assets, which we have exported from Step 3 into the new instance of Content Hub.
 6. For any future executions, make sure that you are either deleting the Assets.xlsx file or creating a file with a different name, to avoid any errors.
 
-###Create Email Template Command Usage Instructions
+### Create Email Template Command Usage Instructions
 
 1. After the above Login is successful in the configurations, fire the following command in the commandline `ch-cli hackstreet createemailtemplate --name NewSubscriptionEmail --label NewSubscriptionEmail --subject "Subscription Success" --body TestBody --description TestDescription --variablename:"UserName" --variabletype:String --variablename:"CallbackUrl" --variabletype:String`
 
