@@ -113,4 +113,3 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 1. Creating a Custom Plugin - https://doc.sitecore.com/ch/en/developers/cloud-dev/create-a-plugin-to-register-a-command.html
 2. Email Template Creation - https://doc.sitecore.com/ch/en/developers/cloud-dev/notifications-client.html#create-an-email-template
 
-If you'd like to make additional comments that is important for your module entry.
