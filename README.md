@@ -28,7 +28,7 @@ We have created a Custom Plugin, and developed Two Commands as a part of the Sit
 
 ## Video link
 
-⟹ [Replace this Video link](#video-link)
+⟹ [Sitecore Content Hub CLI Extensions](https://www.youtube.com/watch?v=RpJ7PpOjeN8)
 
 ## Pre-requisites and Dependencies
 
@@ -79,6 +79,7 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 
 ###Export Command Usage Instructions
 1. Create a Directory to export an Excel file with details of the Assets. Lets create one called "assetstoexport" in C Drive.
+
 ![Export Directory](docs/images/assets-to-export.png?raw=true "Export Directory")  
 2. After the above Login is successful in the configurations, fire the following command in the commandline
 `ch-cli hackstreet exportasset --query AssetMediaToAsset=M.AssetMedia.jpg --location C:\assetstoexport\Asset.xlsx --fields "Title|Description|AssetTypeToAsset|AssetMediaToAsset ` It looks like 
