@@ -3,6 +3,7 @@
   
 ## Team name
 ![HackStreetBoys](docs/images/HackStreetBoys-sitecore-hackathon-2025.png?raw=true "HackStreetBoys")
+
 ⟹ HackStreet Boys
 
 ## Category
