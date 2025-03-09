@@ -2,6 +2,7 @@
 # Sitecore Hackathon 2025
   
 ## Team name
+![HackStreetBoys](docs/images/HackStreetBoys-sitecore-hackathon-2025.png?raw=true "HackStreetBoys")
 ⟹ HackStreet Boys
 
 ## Category
@@ -78,19 +79,33 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 ###Export Command Usage Instructions
 1. Create a Directory to export an Excel file with details of the Assets. Lets create one called "assetstoexport" in C Drive.
 ![Export Directory](docs/images/assets-to-export.png?raw=true "Export Directory")  
-2. After the above Login is successful in the configurations, fire the following command in the command like
+2. After the above Login is successful in the configurations, fire the following command in the commandline
 `ch-cli hackstreet exportasset --query AssetMediaToAsset=M.AssetMedia.jpg --location C:\assetstoexport\Asset.xlsx --fields "Title|Description|AssetTypeToAsset|AssetMediaToAsset ` It looks like 
+
 ![Command in CommandLine](docs/images/Command-in-CommandLine.png?raw=true "Command in CommandLine")
 3. Press Enter and it would execute the command
+
 ![Execution One](docs/images/Export-Execution-1.png?raw=true "Execution One")
 
 ![Execution Two](docs/images/Export-Execution-2.png?raw=true "Execution Two")
 
 ![Execution Three](docs/images/Export-Execution-3.png?raw=true "Execution Three")
+
 4. Notice above, that the messages which are Info, are in blue, Success steps are in Green and the ones which are failed because of required fields not in Content Hub are in RED. Also, the items selected via the query are 26 while the items which are exported are 23. 
-5. This Excel file can now be Imported in a different Content Hub instance after logging into the other instance using the Content Hub content CLI Command `ch-cli content import -s C:\assetstoexport\Asset.xlsx`
+5. This Excel file can now be Imported in a different Content Hub instance after logging into the other instance and run the Import command using the Content Hub content CLI Command `ch-cli content import -s C:\assetstoexport\Asset.xlsx` to import the same Assets, which we have exported from Step 3 into the new instance of Content Hub.
+6. For any future executions, make sure that you are either deleting the Assets.xlsx file or creating a file with a different name, to avoid any errors.
 
 ###Create Email Template Command Usage Instructions
+
+1. After the above Login is successful in the configurations, fire the following command in the commandline `ch-cli hackstreet createemailtemplate --name NewSubscriptionEmail --label NewSubscriptionEmail --subject "Subscription Success" --body TestBody --description TestDescription --variablename:"UserName" --variabletype:String --variablename:"CallbackUrl" --variabletype:String`
+
+![Email Execution One](docs/images/Email-Execution-1.png?raw=true "Email Execution One")
+
+2. The Email Template Command will execute and the logs will be available as follows:
+
+![Email Execution Two](docs/images/Email-Execution-2.png?raw=true "Email Execution Two")
+
+3. We have obfuscated the URL for Security purposes, but as you can see, the URL can directly be copied and pasted in the Browser Address bar, where you have logged in, and you should be able to open the Email template.
 
 ## Comments
 
