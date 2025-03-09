@@ -73,7 +73,7 @@ ch-cli endpoint add --name [CONTENTHUB-INSTANCE-NAME] --url [CONTENTHUB-INSTANCE
 6. It would say it is successful now. 
 
 ![Browser Login](docs/images/success.png?raw=true "Browser Login")  
-7. 
+
 
 ## Usage instructions
 
