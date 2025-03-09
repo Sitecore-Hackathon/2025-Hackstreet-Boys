@@ -55,9 +55,24 @@ namespace HackStreetCLIExtensions.CommandHandlers
                     if (queryFilters.Length > 0)
                     {
                         List<QueryFilter> filters = new List<QueryFilter>();
+                        var standardRepostiory = client.Entities.GetAsync("M.Content.Repository.Standard").ConfigureAwait(false).GetAwaiter().GetResult();
+                        var approvedStatus = client.Entities.GetAsync("M.Final.LifeCycle.Status.Approved").ConfigureAwait(false).GetAwaiter().GetResult();
+                        // Asset type is M.Asset
                         filters.Add(new DefinitionQueryFilter()
                         {
                             Name = "M.Asset"
+                        });
+                        //Making sure that its a Content Hub DAM Asset 
+                        filters.Add(new RelationQueryFilter
+                        {
+                            Relation = "ContentRepositoryToAsset",
+                            ParentId = standardRepostiory.Id
+                        });
+                        //Only taking Assets which are in Final Lifecycle - Approved
+                        filters.Add(new RelationQueryFilter
+                        {
+                            Relation = "FinalLifeCycleStatusToAsset",
+                            ParentId = approvedStatus.Id
                         });
                         foreach (var filter in queryFilters)
                         {
@@ -103,9 +118,17 @@ namespace HackStreetCLIExtensions.CommandHandlers
                         excelKeys.Add("File");
                         excelKeys.Add("FinalLifeCycleStatusToAsset");
 
+                        int i = 0;
                         while (iterator.MoveNextAsync().ConfigureAwait(false).GetAwaiter().GetResult())
                         {
-                            Renderer.RenderView(new SuccessView($"Total assets satisfying the query in Sitecore Content Hub: {iterator.Current.TotalNumberOfResults}"));
+                            //Issue is, this gives error, if we put it outside the While Loop, but if there are more number of results,
+                            //then it will be posted twice on the screen.
+                            //Hence, this if condition is added as a workaround, to print the count of total assets on screen only once.
+                            if (i == 0)
+                            {
+                                Renderer.RenderView(new SuccessView($"Total assets satisfying the query in Sitecore Content Hub: {iterator.Current.TotalNumberOfResults}"));
+                            }
+                            i++;
                             var entities = iterator.Current.Items;
                             foreach (var entity in entities)
                             {
